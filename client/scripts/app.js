@@ -4,28 +4,41 @@ var app = {
   init: function() {}
 };
 
-$.ajax({
-  // always use this url
-  url: 'https://api.parse.com/1/classes/chatterbox',
-  type: 'GET',
-  // data: JSON.stringify(message),
-  contentType: 'application/json',
-  success: function(data) { displayMessages(data);},
-  // function (data) {console.log('chatterbox: Message received');},
-  error: function (data) {
-    // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-    console.error('chatterbox: Message not received');
-  }
-});
+var getMessages = function() {
+  $.ajax({
+    // always use this url
+    url: 'https://api.parse.com/1/classes/chatterbox',
+    type: 'GET',
+    // data: JSON.stringify(message),
+    contentType: 'application/json',
+    // Why can't we just do 'success: displayMessages'?
+    success: function(data) { displayMessages(data);},
+    // function (data) {console.log('chatterbox: Message received');},
+    error: function (data) {
+      // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
+      console.error('chatterbox: Message not received');
+    }
+  });
+};
 
-// Function to display messages; takes an array of objects as argument
 var displayMessages = function(data) {
+  var $messages = $('.messages');
+  $messages.html('');
   for (var i = 0; i < data.results.length; i++) {
     var username = data.results[i].username;
     var text = data.results[i].text;
-    $('.messages').append('<p>' +username+ ': ' + text + '</p>');
+    console.log('typeof username:', typeof username);
+    console.log('typeof text:', typeof text);
+    // if the string doesn't contain illegal characters { append to body }
+    if (username !== undefined && text !== undefined && username.indexOf('<') === -1 && text.indexOf('<') === -1) {
+      $messages.append('<p>' + username + ': ' + text + '</p>');
+    }
   }
 };
+
+//<p><script>alert('hi')</script></p>
+getMessages();
+setInterval(getMessages, 2000);
 
 // var obj = $.ajax({
 //   // always use this url
