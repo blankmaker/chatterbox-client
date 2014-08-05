@@ -2,8 +2,8 @@
 
   var app = {
     server: 'https://api.parse.com/1/classes/chatterbox?order=-createdAt',
-    rooms: {},
-    currentRoom: undefined,
+    rooms: {'(All Messages)': true},
+    currentRoom: '(All Messages)',
     friends: [],
     // Is anonymous function necessary?
     init: function() { app.fetch(); },
@@ -47,7 +47,7 @@
         if (roomname === app.currentRoom){
           $('#chats').append('<p><b>' + roomname + '/' + username + '</b>: ' + text + '</p>');
         }
-        if (app.currentRoom === undefined) {
+        if (app.currentRoom === '(All Messages)') {
           $('#chats').append('<p><b>' + roomname + '/'+ username + '</b>: ' + text + '</p>');
         }
       }
