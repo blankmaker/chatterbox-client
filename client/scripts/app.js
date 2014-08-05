@@ -4,7 +4,7 @@
     server: 'https://api.parse.com/1/classes/chatterbox?order=-createdAt',
     rooms: {'(All Messages)': true},
     currentRoom: '(All Messages)',
-    friends: [],
+    friends: {},
     // Is anonymous function necessary?
     init: function() { app.fetch(); },
     fetch: function() {
@@ -44,7 +44,7 @@
         // console.log('curRoom', app.currentRoom);
         if (message.roomname === app.currentRoom){
           var $messageContainer = $('<div class="messageContainer"></div>');
-          var $username = $('<a href="#"></a>').text(message.username);
+          var $username = $('<a href="#" class="username"></a>').text(message.username);
           var $text = $('<span></span>').text(message.text);
           var $roomname = $('<span></span>').text(message.roomname);
 
@@ -57,7 +57,7 @@
         }
         if(app.currentRoom === '(All Messages)') {
           var $messageContainer = $('<div class="messageContainer"></div>');
-          var $username = $('<a href="#"></a>').text(message.username);
+          var $username = $('<a href="#" class="username"></a>').text(message.username);
           var $text = $('<span></span>').text(message.text);
           var $roomname = $('<span></span>').text(message.roomname);
 
@@ -123,7 +123,8 @@
       };
       app.send(newChat);
       $('#message').val('');
-    }
+    },
+    addFriend: function() {}
   };
 
   // When send button is clicked, create new object with username, text, and roomname
@@ -133,7 +134,8 @@ $(document).ready(function() {
   app.init();
   setInterval(app.fetch, 1000);
 
-  $('#send .submit').on('click', function() {
+  $('#send').on('submit', function(event) {
+    event.preventDefault();
     app.handleSubmit();
   });
 
@@ -141,6 +143,10 @@ $(document).ready(function() {
     app.addRoom($('input.addRoom').val());
     app.currentRoom = $('input.addRoom').val();
     $('input.addRoom').val('');
+  });
+
+  $('username').on('click', function() {
+    console.log('clicked');
   });
 
 
