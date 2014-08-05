@@ -126,3 +126,7 @@ a {
 a:hover {
   text-decoration: underline;
 }
+.friend{
+  background-color: #FFE0E3;
+  font-weight: bold;
+}

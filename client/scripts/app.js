@@ -39,9 +39,15 @@
 
       var roomname = message.roomname;
         // console.log('curRoom', app.currentRoom);
+      for(var friend in app.friends) {
+
+      }
       if (message.roomname === app.currentRoom){
         var $messageContainer = $('<div class="messageContainer"></div>');
         var $username = $('<a href="#" class="username"></a>').text(message.username);
+        if(message.username in app.friends) {
+          $messageContainer.addClass('friend');
+        }
         var $text = $('<span></span>').text(message.text);
         var $roomname = $('<i></i>').text(message.roomname);
 
@@ -55,6 +61,9 @@
       if(app.currentRoom === '(All Messages)') {
         var $messageContainer = $('<div class="messageContainer"></div>');
         var $username = $('<a href="#" class="username"></a>').text(message.username);
+        if(message.username in app.friends) {
+          $messageContainer.addClass('friend');
+        }
         var $text = $('<span></span>').text(message.text);
         var $roomname = $('<i></i>').text(message.roomname);
 
@@ -109,7 +118,9 @@
       app.send(newChat);
       $('#message').val('');
     },
-    addFriend: function() {}
+    addFriend: function(username) {
+      app.friends[username] = true;
+    }
   };
 
   // When send button is clicked, create new object with username, text, and roomname
@@ -129,7 +140,9 @@ $(document).ready(function() {
     $('input.addRoom').val('');
   });
 
-  $('username').on('click', function() {
+  $('#chats').on('click', '.username', function() {
+    var username = $(this).text();
+    app.addFriend(username);
     console.log('clicked');
   });
 
