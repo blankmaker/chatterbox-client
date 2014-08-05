@@ -2,7 +2,8 @@
 
   var app = {
     server: 'https://api.parse.com/1/classes/chatterbox?order=-createdAt',
-    rooms: null,
+    rooms: 'lobby',
+    currentRoom: undefined,
     // Is anonymous function necessary?
     init: function() { app.fetch(); },
     fetch: function() {
@@ -15,13 +16,13 @@
         contentType: 'application/json',
         // Why can't we just do 'success: displayMessages'?
         success: function(data) {
-          app.displayMessages(data);
-          app.rooms = app.getRooms(data);
-          // fix so that rooms populate as needed
+          app.rooms = app.getRooms(data); // returns room object
+          //fix so that rooms populate as needed
           $('select.rooms').html('');
           for (var room in app.rooms) {
-            $('select.rooms').append('<option>' + room + '</option>');
+            $('select.rooms').append('<option>'+ room + '</option>');
           }
+          app.displayMessages(data);
         },
         // function (data) {console.log('chatterbox: Message received');},
         error: function (data) {
@@ -37,9 +38,16 @@
       for (var i = 0; i  < data.results.length; i++) {
         var username = data.results[i].username;
         var text = data.results[i].text;
+        var roomname = data.results[i].roomname;
+        $('.changeRoom').on('click', function() { app.currentRoom = $('.rooms :selected').text();});
         // if the string doesn't contain illegal characters { append to body }
         if (username !== undefined && text !== undefined && username.indexOf('<') === -1 && text.indexOf('<') === -1) {
-          $messages.append('<p><b>' + username + '</b>: ' + text + '</p>');
+          if (roomname === app.currentRoom){
+            $messages.append('<p><b>' + roomname + '/' + username + '</b>: ' + text + '</p>');
+          }
+          if (app.currentRoom === undefined) {
+            $messages.append('<p><b>' + roomname + '/'+ username + '</b>: ' + text + '</p>');
+          }
         }
       }
     },
@@ -74,17 +82,18 @@
 $(document).ready(function() {
 
   app.init();
-  setInterval(app.fetch, 2000);
+  setInterval(app.fetch, 1000);
 
   $('button.send').on('click', function() {
     var newChat = {
       'username': window.location.search.replace('?username=', ''),
       'text': $('.chatbox').val(),
-      'roomname': '4chan'
+      'roomname': app.currentRoom
     };
     app.send(newChat);
     $('.chatbox').val('');
   });
+
 
   //<p><script>alert('hi')</script></p>
 });
