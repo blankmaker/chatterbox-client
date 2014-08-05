@@ -2,8 +2,9 @@
 
   var app = {
     server: 'https://api.parse.com/1/classes/chatterbox?order=-createdAt',
-    rooms: 'lobby',
+    rooms: {},
     currentRoom: undefined,
+    friends: [],
     // Is anonymous function necessary?
     init: function() { app.fetch(); },
     fetch: function() {
@@ -16,11 +17,13 @@
         contentType: 'application/json',
         // Why can't we just do 'success: displayMessages'?
         success: function(data) {
-          app.rooms = app.getRooms(data); // returns room object
-          //fix so that rooms populate as needed
-          $('select.rooms').html('');
+          _.defaults(app.rooms, app.getRooms(data)); // returns room object
+          // fix so that rooms populate as needed
+          // $('select#roomSelect').html('');
           for (var room in app.rooms) {
-            $('select.rooms').append('<option>'+ room + '</option>');
+            if($('option').text().indexOf(room) === -1) {
+              app.addRoom(room);
+            }
           }
           app.displayMessages(data);
         },
@@ -31,24 +34,29 @@
         }
       });
     },
+    clearMessages: function() {
+      $('#chats').html('');
+    },
+    addMessage: function(message) {
+      var username = message.username;
+      var text = message.text;
+      var roomname = message.roomname;
+      $('button.changeRoom').on('click', function() { app.currentRoom = $('select#roomSelect :selected').text();});
+      // if the string doesn't contain illegal characters { append to body }
+      if (username !== undefined && text !== undefined && username.indexOf('<') === -1 && text.indexOf('<') === -1) {
+        if (roomname === app.currentRoom){
+          $('#chats').append('<p><b>' + roomname + '/' + username + '</b>: ' + text + '</p>');
+        }
+        if (app.currentRoom === undefined) {
+          $('#chats').append('<p><b>' + roomname + '/'+ username + '</b>: ' + text + '</p>');
+        }
+      }
+    },
     displayMessages: function(data) {
-      var $messages = $('.messages');
-      $messages.html('');
+      app.clearMessages();
       // loop and display recent messages first
       for (var i = 0; i  < data.results.length; i++) {
-        var username = data.results[i].username;
-        var text = data.results[i].text;
-        var roomname = data.results[i].roomname;
-        $('.changeRoom').on('click', function() { app.currentRoom = $('.rooms :selected').text();});
-        // if the string doesn't contain illegal characters { append to body }
-        if (username !== undefined && text !== undefined && username.indexOf('<') === -1 && text.indexOf('<') === -1) {
-          if (roomname === app.currentRoom){
-            $messages.append('<p><b>' + roomname + '/' + username + '</b>: ' + text + '</p>');
-          }
-          if (app.currentRoom === undefined) {
-            $messages.append('<p><b>' + roomname + '/'+ username + '</b>: ' + text + '</p>');
-          }
-        }
+        app.addMessage(data.results[i]);
       }
     },
     send: function(message) {
@@ -73,9 +81,11 @@
         rooms[data.results[i].roomname] = true;
       }
       return rooms;
+    },
+    addRoom: function(room) {
+      $('select#roomSelect').append('<option>'+ room + '</option>');
     }
   };
- console.log('app.rooms:', app.rooms);
 
   // When send button is clicked, create new object with username, text, and roomname
 
