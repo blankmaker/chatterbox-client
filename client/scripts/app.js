@@ -18,8 +18,6 @@
         // Why can't we just do 'success: displayMessages'?
         success: function(data) {
           _.defaults(app.rooms, app.getRooms(data)); // returns room object
-          // fix so that rooms populate as needed
-          // $('select#roomSelect').html('');
           app.displayMessages(data);
           for (var room in app.rooms) {
             if($('option').text().indexOf(room) === -1) {
@@ -27,7 +25,6 @@
             }
           }
         },
-        // function (data) {console.log('chatterbox: Message received');},
         error: function (data) {
           // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
           console.error('chatterbox: Message not received');
@@ -42,47 +39,35 @@
 
       var roomname = message.roomname;
         // console.log('curRoom', app.currentRoom);
-        if (message.roomname === app.currentRoom){
-          var $messageContainer = $('<div class="messageContainer"></div>');
-          var $username = $('<a href="#" class="username"></a>').text(message.username);
-          var $text = $('<span></span>').text(message.text);
-          var $roomname = $('<span></span>').text(message.roomname);
+      if (message.roomname === app.currentRoom){
+        var $messageContainer = $('<div class="messageContainer"></div>');
+        var $username = $('<a href="#" class="username"></a>').text(message.username);
+        var $text = $('<span></span>').text(message.text);
+        var $roomname = $('<i></i>').text(message.roomname);
 
-          $messageContainer.append($roomname);
-          $messageContainer.append(' / ');
-          $messageContainer.append($username);
-          $messageContainer.append(': ');
-          $messageContainer.append($text);
-          $('#chats').append($messageContainer);
-        }
-        if(app.currentRoom === '(All Messages)') {
-          var $messageContainer = $('<div class="messageContainer"></div>');
-          var $username = $('<a href="#" class="username"></a>').text(message.username);
-          var $text = $('<span></span>').text(message.text);
-          var $roomname = $('<span></span>').text(message.roomname);
+        $messageContainer.append($username);
+        $messageContainer.append(' ');
+        $messageContainer.append($roomname);
+        $messageContainer.append(': ');
+        $messageContainer.append($text);
+        $('#chats').append($messageContainer);
+      }
+      if(app.currentRoom === '(All Messages)') {
+        var $messageContainer = $('<div class="messageContainer"></div>');
+        var $username = $('<a href="#" class="username"></a>').text(message.username);
+        var $text = $('<span></span>').text(message.text);
+        var $roomname = $('<i></i>').text(message.roomname);
 
-          $messageContainer.append($roomname);
-          $messageContainer.append(' / ');
-          $messageContainer.append($username);
-          $messageContainer.append(': ');
-          $messageContainer.append($text);
-          $('#chats').append($messageContainer);
-        }
-
-
-      // if the string doesn't contain illegal characters { append to bod
-      // escapedMessage = $('<p></p>').text(message.roomname + '/' + message.username + ': ' + message.text);
-      // $('select#roomSelect').append(escapedRoom);
-
-      // if (username !== undefined && text !== undefined && roomname !== undefined) {
-
-      // var username = message.username.replace(/[&<>"'\/]/g, '');
-      // var text = message.text.replace(/[&<>"'\/]/g, '');;
-      },
-      // console.log($(username).selector);
+        $messageContainer.append($username);
+        $messageContainer.append(' ');
+        $messageContainer.append($roomname);
+        $messageContainer.append(': ');
+        $messageContainer.append($text);
+        $('#chats').append($messageContainer);
+      }
+    },
     displayMessages: function(data) {
       app.clearMessages();
-      // loop and display recent messages first
       for (var i = 0; i < data.results.length; i++) {
         app.addMessage(data.results[i]);
       }
@@ -130,7 +115,6 @@
   // When send button is clicked, create new object with username, text, and roomname
 
 $(document).ready(function() {
-
   app.init();
   setInterval(app.fetch, 1000);
 
@@ -153,18 +137,14 @@ $(document).ready(function() {
   //<p><script>alert('hi')</script></p>
 });
 
-  // Hacks:
-  // <
-  // $(".main").css("background-color", "green")
+// obj.responseJSON.results <-- an array of objects
+// obj.responseJSON.results[i].text
+// var obj = obj.responseJSON.results[i]; // for looping, use i
+// obj.text;
 
-  // obj.responseJSON.results <-- an array of objects
-  // obj.responseJSON.results[i].text
-  // var obj = obj.responseJSON.results[i]; // for looping, use i
-  // obj.text;
-
-  // createdAt: "2013-10-07T23:25:18.729Z"
-  // objectId: "CrVkLDG4DK"
-  // roomname: "room1"
-  // text: ""
-  // updatedAt: "2013-10-07T23:25:18.729Z"
-  // username: "PeterandGeorge"
+// createdAt: "2013-10-07T23:25:18.729Z"
+// objectId: "CrVkLDG4DK"
+// roomname: "room1"
+// text: ""
+// updatedAt: "2013-10-07T23:25:18.729Z"
+// username: "PeterandGeorge"
