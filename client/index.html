@@ -16,10 +16,13 @@
     <div id="main">
       <h1>chatterbox</h1>
       <!-- Your HTML goes here! -->
-      <input type="text" class="chatbox"/>
-      <button type="button" class="send">send</button>
+      <form id="send" onsubmit="return false">
+        <input type="text" id="message"/>
+        <input type="submit" class="submit"></input>
+      </form>
+      <br>
       <select id="roomSelect"></select>
-      <button type="button" class="changeRoom">change room</button>
+      <button type="button" class="changeRoom">change room</button><br>
       <input type="text" class="addRoom"/>
       <button type="button" class="addRoom">add room</button>
       <div id="chats">

@@ -38,26 +38,52 @@
       $('#chats').html('');
     },
     addMessage: function(message) {
-      var username = message.username;
-      var text = message.text;
-      var roomname = message.roomname;
       $('button.changeRoom').on('click', function() { app.currentRoom = $('select#roomSelect :selected').text();});
-      // if the string doesn't contain illegal characters { append to body }
-      if (username !== undefined && text !== undefined && username.indexOf('<') === -1 && text.indexOf('<') === -1) {
-        // console.log('room:', roomname);
+
+      var roomname = message.roomname;
         // console.log('curRoom', app.currentRoom);
-        if (roomname === app.currentRoom){
-          $('#chats').append('<p><b>' + roomname + '/' + username + '</b>: ' + text + '</p>');
+        if (message.roomname === app.currentRoom){
+          var $messageContainer = $('<div class="messageContainer"></div>');
+          var $username = $('<a href="#"></a>').text(message.username);
+          var $text = $('<span></span>').text(message.text);
+          var $roomname = $('<span></span>').text(message.roomname);
+
+          $messageContainer.append($roomname);
+          $messageContainer.append(' / ');
+          $messageContainer.append($username);
+          $messageContainer.append(': ');
+          $messageContainer.append($text);
+          $('#chats').append($messageContainer);
         }
         if(app.currentRoom === '(All Messages)') {
-          $('#chats').append('<p><b>' + roomname + '/'+ username + '</b>: ' + text + '</p>');
+          var $messageContainer = $('<div class="messageContainer"></div>');
+          var $username = $('<a href="#"></a>').text(message.username);
+          var $text = $('<span></span>').text(message.text);
+          var $roomname = $('<span></span>').text(message.roomname);
+
+          $messageContainer.append($roomname);
+          $messageContainer.append(' / ');
+          $messageContainer.append($username);
+          $messageContainer.append(': ');
+          $messageContainer.append($text);
+          $('#chats').append($messageContainer);
         }
-      }
-    },
+
+
+      // if the string doesn't contain illegal characters { append to bod
+      // escapedMessage = $('<p></p>').text(message.roomname + '/' + message.username + ': ' + message.text);
+      // $('select#roomSelect').append(escapedRoom);
+
+      // if (username !== undefined && text !== undefined && roomname !== undefined) {
+
+      // var username = message.username.replace(/[&<>"'\/]/g, '');
+      // var text = message.text.replace(/[&<>"'\/]/g, '');;
+      },
+      // console.log($(username).selector);
     displayMessages: function(data) {
       app.clearMessages();
       // loop and display recent messages first
-      for (var i = 0; i  < data.results.length; i++) {
+      for (var i = 0; i < data.results.length; i++) {
         app.addMessage(data.results[i]);
       }
     },
@@ -85,7 +111,18 @@
       return rooms;
     },
     addRoom: function(room) {
-      $('select#roomSelect').append('<option>'+ room + '</option>');
+      // room = room.replace(/[&<>"'\/]/g, '');
+      escapedRoom = $('<option></option>').text(room);
+      $('select#roomSelect').append(escapedRoom);
+    },
+    handleSubmit: function() {
+      var newChat = {
+        'username': window.location.search.replace('?username=', ''),
+        'text': $('#message').val(),
+        'roomname': app.currentRoom === '(All Messages)' ? '' : app.currentRoom
+      };
+      app.send(newChat);
+      $('#message').val('');
     }
   };
 
@@ -96,14 +133,8 @@ $(document).ready(function() {
   app.init();
   setInterval(app.fetch, 1000);
 
-  $('button.send').on('click', function() {
-    var newChat = {
-      'username': window.location.search.replace('?username=', ''),
-      'text': $('.chatbox').val(),
-      'roomname': app.currentRoom === '(All Messages)' ? '' : app.currentRoom
-    };
-    app.send(newChat);
-    $('.chatbox').val('');
+  $('#send .submit').on('click', function() {
+    app.handleSubmit();
   });
 
   $('button.addRoom').on('click', function() {
