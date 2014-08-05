@@ -20,12 +20,12 @@
           _.defaults(app.rooms, app.getRooms(data)); // returns room object
           // fix so that rooms populate as needed
           // $('select#roomSelect').html('');
+          app.displayMessages(data);
           for (var room in app.rooms) {
             if($('option').text().indexOf(room) === -1) {
-              app.addRoom(room);
+              app.addRoom(room); // changes currentRoom
             }
           }
-          app.displayMessages(data);
         },
         // function (data) {console.log('chatterbox: Message received');},
         error: function (data) {
@@ -44,10 +44,12 @@
       $('button.changeRoom').on('click', function() { app.currentRoom = $('select#roomSelect :selected').text();});
       // if the string doesn't contain illegal characters { append to body }
       if (username !== undefined && text !== undefined && username.indexOf('<') === -1 && text.indexOf('<') === -1) {
+        // console.log('room:', roomname);
+        // console.log('curRoom', app.currentRoom);
         if (roomname === app.currentRoom){
           $('#chats').append('<p><b>' + roomname + '/' + username + '</b>: ' + text + '</p>');
         }
-        if (app.currentRoom === '(All Messages)') {
+        if(app.currentRoom === '(All Messages)') {
           $('#chats').append('<p><b>' + roomname + '/'+ username + '</b>: ' + text + '</p>');
         }
       }
@@ -98,10 +100,16 @@ $(document).ready(function() {
     var newChat = {
       'username': window.location.search.replace('?username=', ''),
       'text': $('.chatbox').val(),
-      'roomname': app.currentRoom
+      'roomname': app.currentRoom === '(All Messages)' ? '' : app.currentRoom
     };
     app.send(newChat);
     $('.chatbox').val('');
+  });
+
+  $('button.addRoom').on('click', function() {
+    app.addRoom($('input.addRoom').val());
+    app.currentRoom = $('input.addRoom').val();
+    $('input.addRoom').val('');
   });
 
 
