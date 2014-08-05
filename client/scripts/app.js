@@ -14,7 +14,15 @@
         // data: JSON.stringify(message),
         contentType: 'application/json',
         // Why can't we just do 'success: displayMessages'?
-        success: function(data) { app.displayMessages(data); app.rooms = app.getRooms(data); },
+        success: function(data) {
+          app.displayMessages(data);
+          app.rooms = app.getRooms(data);
+          // fix so that rooms populate as needed
+          $('select.rooms').html('');
+          for (var room in app.rooms) {
+            $('select.rooms').append('<option>' + room + '</option>');
+          }
+        },
         // function (data) {console.log('chatterbox: Message received');},
         error: function (data) {
           // see: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -59,12 +67,16 @@
       return rooms;
     }
   };
+ console.log('app.rooms:', app.rooms);
 
   // When send button is clicked, create new object with username, text, and roomname
 
 $(document).ready(function() {
 
-  $('button').on('click', function() {
+  app.init();
+  setInterval(app.fetch, 2000);
+
+  $('button.send').on('click', function() {
     var newChat = {
       'username': window.location.search.replace('?username=', ''),
       'text': $('.chatbox').val(),
@@ -75,8 +87,7 @@ $(document).ready(function() {
   });
 
   //<p><script>alert('hi')</script></p>
-  app.init();
-  setInterval(app.fetch, 2000);
+});
 
   // Hacks:
   // <
@@ -93,4 +104,3 @@ $(document).ready(function() {
   // text: ""
   // updatedAt: "2013-10-07T23:25:18.729Z"
   // username: "PeterandGeorge"
-});
