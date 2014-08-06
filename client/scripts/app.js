@@ -50,12 +50,12 @@ var app = {
       } else {
         $text.removeClass('friend');
       }
-      var $roomname = $('<i>').text(message.roomname);
+      var $roomname = $('<i class="roomname">').text(message.roomname);
 
       $messageContainer.append($username);
       $messageContainer.append(' ');
       $messageContainer.append($roomname);
-      $messageContainer.append(': ');
+      $messageContainer.append(' ');
       $messageContainer.append($text);
       $('#chats').append($messageContainer);
     }
@@ -69,12 +69,12 @@ var app = {
       } else {
         $text.removeClass('friend');
       }
-      var $roomname = $('<i>').text(message.roomname);
+      var $roomname = $('<i class="roomname">').text(message.roomname);
 
       $messageContainer.append($username);
       $messageContainer.append(' ');
       $messageContainer.append($roomname);
-      $messageContainer.append(': ');
+      $messageContainer.append(' ');
       $messageContainer.append($text);
       $('#chats').append($messageContainer);
     }

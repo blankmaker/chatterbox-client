@@ -126,6 +126,9 @@ a {
 a:hover {
   text-decoration: underline;
 }
-.friend{
+.friend {
   font-weight: bold;
+}
+.roomname {
+  color: gray;
 }
